@@ -6,6 +6,7 @@ import Modal from "react-bootstrap/Modal";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
+import Form from "react-bootstrap/Form";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -26,36 +27,59 @@ const CRUD = () => {
   const [editSurname, setEditSurname] = useState("");
   const [editBirthday, setEditBirthday] = useState("");
   const [editEmail, setEditEmail] = useState("");
+  
+  const [nameTouched, setNameTouched] = useState(false);
+  const [nameError, setNameError] = useState(false);
+  const [surnameTouched, setSurnameTouched] = useState(false);
+  const [surnameError, setSurnameError] = useState(false);
+  const [birthdayTouched, setBirthdayTouched] = useState(false);
+  const [birthdayError, setBirthdayError] = useState(false);
+  const [emailTouched, setEmailTouched] = useState(false);
+  const [emailError, setEmailError] = useState(false);
+  
+  const [nameTimeoutID, setNameTimeoutID] = useState(null);
+  const [surnameTimeoutID, setSurnameTimeoutID] = useState(null);
+  const [birthdayTimeoutID, setBirthdayTimeoutID] = useState(null);
+  const [emailTimeoutID, setEmailTimeoutID] = useState(null);
 
-  const studata = [
-    {
-      id: 1,
-      name: "Volkan",
-      surname: "Demirel",
-      birthday: "1981-11-27",
-      email: "volkan.demirel1@gmail.com",
-    },
-    {
-      id: 2,
-      name: "Aykut",
-      surname: "Kocaman",
-      birthday: "1965-05-05",
-      email: "aykut.kocaman2@gmail.com",
-    },
-    {
-      id: 3,
-      name: "Alex",
-      surname: "De Souza",
-      birthday: "1977-09-14",
-      email: "alex.deSouza07@gmail.com",
-    },
-  ];
 
   const [data, setData] = useState([]);
 
   useEffect(() => {
     getData();
   }, []);
+
+  useEffect(() => {
+    if (nameTouched){
+      if(name === ''){
+        setNameError(true);
+      }else{
+        setNameError(false);
+      }
+    }
+    if (surnameTouched){
+      if(surname===''){
+        setSurnameError(true);
+      }else{
+        setSurnameError(false);
+      }
+    }
+    if (birthdayTouched){
+      if(birthday===''){
+        setBirthdayError(true);
+      }else{
+        setBirthdayError(false);
+      }
+    }
+    if(emailTouched){
+      if(email===''){
+        setEmailError(true);
+      }else{
+        setEmailError(false);
+      }
+    }
+  }, [name, nameTouched, surname, surnameTouched, birthday, birthdayTouched, email, emailTouched]);
+  
 
   const getData = () => {
     axios
@@ -170,6 +194,7 @@ const validateInputs = (name, surname, birthday, email) =>{
     setEditId("");
   };
 
+
   return (
     <Fragment>
       <ToastContainer />
@@ -182,6 +207,12 @@ const validateInputs = (name, surname, birthday, email) =>{
               placeholder="Enter name"
               value={name}
               onChange={(e) => setName(e.target.value)}
+              onBlur={()=> {
+                setNameTouched(true);
+                const timeoutID = setTimeout(() => setNameTouched(false), 60);
+                setNameTimeoutID(timeoutID);
+              }}
+              style={{borderColor: nameError ? 'red' : ''}}
             />
           </Col>
           <Col>
@@ -191,6 +222,8 @@ const validateInputs = (name, surname, birthday, email) =>{
               placeholder="Enter surname"
               value={surname}
               onChange={(e) => setSurname(e.target.value)}
+              onBlur={()=> setSurnameTouched(true)}
+              style={{borderColor : surnameError ? 'red' : ''}}
             />
           </Col>
           <Col>
@@ -200,6 +233,8 @@ const validateInputs = (name, surname, birthday, email) =>{
               placeholder="Enter birthday"
               value={birthday}
               onChange={(e) => setBirthday(e.target.value)}
+              onBlur={() => setBirthdayTouched(true)}
+              style={{borderColor : birthdayError ? 'red' : ''}}
             />
           </Col>
           <Col>
@@ -209,6 +244,8 @@ const validateInputs = (name, surname, birthday, email) =>{
               placeholder="Enter email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              onBlur={() => setEmailTouched(true)}
+              style={{borderColor : emailError ? 'red' : ''}}
             />
           </Col>
           <Col>
