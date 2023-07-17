@@ -138,6 +138,7 @@ const CRUD = () => {
   };
 
   const handleEdit = (id) => {
+  if(userRole === 'admin') {
     handleShow();
     axios
       .get(`https://localhost:7182/api/Students/${id}`)
@@ -151,7 +152,9 @@ const CRUD = () => {
       .catch((error) => {
         console.log(error);
       });
-  };
+  }
+};
+
 
   const handleDelete = (id) => {
     if (window.confirm("Are you sure you want to delete this student?")) {
@@ -360,7 +363,7 @@ const CRUD = () => {
                       <td>{item.birthday}</td>
                       <td>{item.email}</td>
                       <td colSpan={2}>
-                        <button
+                        {userRole === 'admin' && (<><button
                           className="btn btn-primary"
                           onClick={() => handleEdit(item.id)}
                         >
@@ -372,7 +375,7 @@ const CRUD = () => {
                           onClick={() => handleDelete(item.id)}
                         >
                           Delete
-                        </button>
+                        </button></>)}
                       </td>
                     </tr>
                   );
