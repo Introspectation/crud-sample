@@ -240,8 +240,10 @@ const CRUD = () => {
 
   return (
     <Fragment>
-      {!loggedIn && (
+      {!loggedIn && ( 
         <Fragment>
+                  <h1 style={{ textAlign: "center" }}>LOGIN</h1>
+
           <ToastContainer />
           <Container>
             <Row>
@@ -286,6 +288,7 @@ const CRUD = () => {
 
       {loggedIn && (
         <Fragment>
+          <h1 style={{ textAlign: "center" }}>STUDENT REGISTER</h1>
           <ToastContainer />
           <Container>
             <Row>
