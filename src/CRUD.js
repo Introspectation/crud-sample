@@ -288,7 +288,8 @@ const CRUD = () => {
 
       {loggedIn && (
         <Fragment>
-          <h1 style={{ textAlign: "center" }}>STUDENT REGISTER</h1>
+        <h1 style={{ textAlign: "center" }}>
+  {userRole === 'admin' ? 'STUDENT REGISTER (ADMIN)' : 'STUDENT REGISTER (VIEWER)'}</h1>
           <ToastContainer />
           <Container>
             <Row>
@@ -301,6 +302,8 @@ const CRUD = () => {
                   onChange={(e) => setName(e.target.value)}
                   onBlur={() => setNameTouched(true)}
                   style={{ borderColor: nameError ? "red" : "" }}
+                  disabled={userRole === 'viewer'}
+
                 />
               </Col>
               <Col>
@@ -312,6 +315,8 @@ const CRUD = () => {
                   onChange={(e) => setSurname(e.target.value)}
                   onBlur={() => setSurnameTouched(true)}
                   style={{ borderColor: surnameError ? "red" : "" }}
+                  disabled={userRole === 'viewer'}
+
                 />
               </Col>
               <Col>
@@ -323,6 +328,7 @@ const CRUD = () => {
                   onChange={(e) => setBirthday(e.target.value)}
                   onBlur={() => setBirthdayTouched(true)}
                   style={{ borderColor: birthdayError ? "red" : "" }}
+                  disabled={userRole === 'viewer'}
                 />
               </Col>
               <Col>
@@ -334,12 +340,19 @@ const CRUD = () => {
                   onChange={(e) => setEmail(e.target.value)}
                   onBlur={() => setEmailTouched(true)}
                   style={{ borderColor: emailError ? "red" : "" }}
+                  disabled={userRole === 'viewer'}
                 />
               </Col>
               <Col>
-                <button className="btn btn-primary" onClick={handleSave}>
-                  Submit
-                </button>
+              {userRole === 'admin' ? (
+                  <button className="btn btn-primary" onClick={handleSave}>
+                    Submit
+                  </button>
+                ) : (
+                  <button className="btn btn-primary" onClick={handleSave} disabled>
+                    Submit
+                  </button>
+                )}
               </Col>
             </Row>
           </Container>
