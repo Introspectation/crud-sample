@@ -44,12 +44,15 @@ const CRUD = () => {
   const [loggedIn, setLoggedIn] = useState(false);
   const [userRole, setUserRole] = useState("");
 
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
   const handleLogin = () => {
-    if (name === "admin" && email === "admin123") {
+    if (username === "admin" && password === "admin123") {
       setLoggedIn(true);
       setUserRole("admin");
       toast.success("Logged in successfully!");
-    } else if (name === "viewer" && email === "viewer123") {
+    } else if (username === "viewer" && password === "viewer123") {
       setLoggedIn(true);
       setUserRole("viewer");
       toast.success("Logged in successfully!");
@@ -58,12 +61,25 @@ const CRUD = () => {
     }
   };
 
+  const handleLogout = () => {
+    setLoggedIn(false);
+    setUserRole("");
+    setUsername("");
+    setPassword("");
+    toast.success("Logged out successfully!");
+  };
   useEffect(() => {
     if (!loggedIn) {
-      setName("");
-      setEmail("");
+      setUsername("");
+      setPassword("");
     }
   }, [loggedIn]);
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      handleLogin();
+    }
+  }
 
   useEffect(() => {
     if (nameTouched) {
@@ -138,23 +154,22 @@ const CRUD = () => {
   };
 
   const handleEdit = (id) => {
-  if(userRole === 'admin') {
-    handleShow();
-    axios
-      .get(`https://localhost:7182/api/Students/${id}`)
-      .then((result) => {
-        setEditName(result.data.name);
-        setEditSurname(result.data.surname);
-        setEditEmail(result.data.email);
-        setEditBirthday(result.data.birthday);
-        setEditId(id);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }
-};
-
+    if (userRole === "admin") {
+      handleShow();
+      axios
+        .get(`https://localhost:7182/api/Students/${id}`)
+        .then((result) => {
+          setEditName(result.data.name);
+          setEditSurname(result.data.surname);
+          setEditEmail(result.data.email);
+          setEditBirthday(result.data.birthday);
+          setEditId(id);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  };
 
   const handleDelete = (id) => {
     if (window.confirm("Are you sure you want to delete this student?")) {
@@ -240,10 +255,9 @@ const CRUD = () => {
 
   return (
     <Fragment>
-      {!loggedIn && ( 
+      {!loggedIn && (
         <Fragment>
-                  <h1 style={{ textAlign: "center" }}>LOGIN</h1>
-
+          <h1 style={{ textAlign: "center" }}>LOGIN</h1>
           <ToastContainer />
           <Container>
             <Row>
@@ -251,29 +265,20 @@ const CRUD = () => {
                 <input
                   type="text"
                   className="form-control"
-                  placeholder="name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  onBlur={() => {
-                    setNameTouched(true);
-                    const timeoutID = setTimeout(
-                      () => setNameTouched(false),
-                      6000
-                    );
-                    setNameTimeoutID(timeoutID);
-                  }}
-                  style={{ borderColor: nameError ? "red" : "" }}
+                  placeholder="Username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  onKeyUp={handleKeyPress}
                 />
               </Col>
               <Col>
                 <input
                   type="password"
                   className="form-control"
-                  placeholder="mail"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  onBlur={() => setEmailTouched(true)}
-                  style={{ borderColor: emailError ? "red" : "" }}
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  onKeyUp={handleKeyPress}
                 />
               </Col>
               <Col>
@@ -288,8 +293,14 @@ const CRUD = () => {
 
       {loggedIn && (
         <Fragment>
-        <h1 style={{ textAlign: "center" }}>
-  {userRole === 'admin' ? 'STUDENT REGISTER (ADMIN)' : 'STUDENT REGISTER (VIEWER)'}</h1>
+          <h1 style={{ textAlign: "center" }}>
+            {userRole === "admin"
+              ? "STUDENT REGISTER (ADMIN)"
+              : "STUDENT REGISTER (VIEWER)"}
+          </h1>
+          <Button variant="danger" onClick={handleLogout}>
+            Logout
+          </Button>
           <ToastContainer />
           <Container>
             <Row>
@@ -302,8 +313,7 @@ const CRUD = () => {
                   onChange={(e) => setName(e.target.value)}
                   onBlur={() => setNameTouched(true)}
                   style={{ borderColor: nameError ? "red" : "" }}
-                  disabled={userRole === 'viewer'}
-
+                  disabled={userRole === "viewer"}
                 />
               </Col>
               <Col>
@@ -315,8 +325,7 @@ const CRUD = () => {
                   onChange={(e) => setSurname(e.target.value)}
                   onBlur={() => setSurnameTouched(true)}
                   style={{ borderColor: surnameError ? "red" : "" }}
-                  disabled={userRole === 'viewer'}
-
+                  disabled={userRole === "viewer"}
                 />
               </Col>
               <Col>
@@ -328,7 +337,7 @@ const CRUD = () => {
                   onChange={(e) => setBirthday(e.target.value)}
                   onBlur={() => setBirthdayTouched(true)}
                   style={{ borderColor: birthdayError ? "red" : "" }}
-                  disabled={userRole === 'viewer'}
+                  disabled={userRole === "viewer"}
                 />
               </Col>
               <Col>
@@ -340,16 +349,20 @@ const CRUD = () => {
                   onChange={(e) => setEmail(e.target.value)}
                   onBlur={() => setEmailTouched(true)}
                   style={{ borderColor: emailError ? "red" : "" }}
-                  disabled={userRole === 'viewer'}
+                  disabled={userRole === "viewer"}
                 />
               </Col>
               <Col>
-              {userRole === 'admin' ? (
+                {userRole === "admin" ? (
                   <button className="btn btn-primary" onClick={handleSave}>
                     Submit
                   </button>
                 ) : (
-                  <button className="btn btn-primary" onClick={handleSave} disabled>
+                  <button
+                    className="btn btn-primary"
+                    onClick={handleSave}
+                    disabled
+                  >
                     Submit
                   </button>
                 )}
@@ -379,19 +392,23 @@ const CRUD = () => {
                       <td>{item.birthday}</td>
                       <td>{item.email}</td>
                       <td colSpan={2}>
-                        {userRole === 'admin' && (<><button
-                          className="btn btn-primary"
-                          onClick={() => handleEdit(item.id)}
-                        >
-                          Edit
-                        </button>{" "}
-                        &nbsp;
-                        <button
-                          className="btn btn-danger"
-                          onClick={() => handleDelete(item.id)}
-                        >
-                          Delete
-                        </button></>)}
+                        {userRole === "admin" && (
+                          <>
+                            <button
+                              className="btn btn-primary"
+                              onClick={() => handleEdit(item.id)}
+                            >
+                              Edit
+                            </button>{" "}
+                            &nbsp;
+                            <button
+                              className="btn btn-danger"
+                              onClick={() => handleDelete(item.id)}
+                            >
+                              Delete
+                            </button>
+                          </>
+                        )}
                       </td>
                     </tr>
                   );
